@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from parser import parse_python_code
+from ai_engine import generate_demo_docstring
 
 app = FastAPI()
 
@@ -35,15 +36,20 @@ async def upload_file(file: UploadFile = File(...)):
     # Parse Code (AST)
 
     parsed_data = parse_python_code(code)
-    print(f"Parsed Data: {parsed_data}")
-    print(f"File Name: {file.filename}")
-    print(f"File Size: {len(contents)} bytes")
-    print(code)
+
+
+    results = []
+
+    for func in parsed_data["functions_found"]:
+        docstring = generate_demo_docstring(func)
+
+    results.append({
+        "function_name": func["function_name"],
+        "parameters": func["parameters"],
+        "docstring": docstring
+    })
 
     return {
         "filename": file.filename,
-        "functions_found": parsed_data
+        "functions_found": results
     }
-
-    
-
