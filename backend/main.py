@@ -43,11 +43,11 @@ async def upload_file(file: UploadFile = File(...)):
     for func in parsed_data["functions_found"]:
         docstring = generate_demo_docstring(func)
 
-    results.append({
-        "function_name": func["function_name"],
-        "parameters": func["parameters"],
-        "docstring": docstring
-    })
+        results.append({
+            "function_name": func["function_name"],
+            "parameters": func["parameters"],
+            "docstring": docstring
+        })
 
     return {
         "filename": file.filename,

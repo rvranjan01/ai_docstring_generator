@@ -1,59 +1,54 @@
+# Gemini API integration for generating professional Google-style Python docstrings based on function metadata and logic.
 import os
-from openai import OpenAI
+from dotenv import load_dotenv
+from google import genai
 
-# Get API key from environment variable
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+load_dotenv()  # Load environment variables from .env file
 
-# def generate_real_docstring(function_data: dict):
-#     """
-#     Generates AI-powered docstring using OpenAI.
-#     """
+# Initialize Gemini client using API key from environment variable
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise RuntimeError("GEMINI_API_KEY is not set in environment variables.")
 
-#     prompt = f"""
-#     Generate a professional Google-style Python docstring.
+client = genai.Client(api_key=api_key)
 
-#     Function Name: {function_data['function_name']}
-#     Parameters: {function_data['parameters']}
-#     """
 
-#     response = client.chat.completions.create(
-#         model="gpt-4o-mini",
-#         messages=[
-#             {"role": "system", "content": "You are a Python documentation expert."},
-#             {"role": "user", "content": prompt}
-#         ]
-#     )
-
-#     return response.choices[0].message.content.strip()
-
-# ............................................... 
-
-def generate_demo_docstring(function_data: dict):
+def generate_demo_docstring(function_data: dict) -> str:
     """
-    Generates a simple structured docstring based on function name and parameters.
+    Generate a professional Google-style Python docstring for a function
+    using the Gemini API.
     """
+    function_name = function_data.get("function_name", "unknown_function")
+    parameters = function_data.get("parameters", [])
+    logic = function_data.get("logic", [])
 
-    name = function_data["function_name"]
-    params = function_data["parameters"]
+    # Join AST-dumped logic into a readable block
+    logic_str = "\n".join(logic)
 
-    # Format parameters section
-    if params:
-        param_text = "\n".join(
-            [f"    {p}: Description of {p}" for p in params]
-        )
-    else:
-        param_text = "    None"
+    prompt = f"""
+You are a Python documentation expert.
 
-    docstring = f"""
-\"\"\"
-{name} function.
+Write a professional Google-style docstring for the following function.
 
-Parameters:
-{param_text}
+Function name: {function_name}
+Parameters: {parameters}
 
-Returns:
-    Description of return value.
-\"\"\"
+The function's internal logic (AST-like representation) is:
+
+{logic_str}
+
+Requirements:
+- Use Google Python style.
+- Explain what the function does (1–3 sentences).
+- Document each parameter with type (guess if needed) and description.
+- Document the return value.
+- If the function may raise any obvious exceptions, mention them in a Raises section.
+- Do NOT include the function definition itself, only the docstring content (between triple quotes).
 """
 
-    return docstring.strip()
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+    )
+
+    return response.text.strip()
