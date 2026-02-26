@@ -117,4 +117,3 @@ Distributed under the [MIT License](LICENSE).
 
 ---
 
-*This README was generated with assistance from GitHub Copilot based on project analysis.*
