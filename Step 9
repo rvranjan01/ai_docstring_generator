@@ -1,0 +1,50 @@
+import ast
+import os
+
+
+def quality_check(file_path):
+    """
+    Performs quality checks on the Python file after docstring insertion.
+    Ensures syntax validity and presence of docstrings.
+    """
+
+    try:
+        # 1. Check whether the file is syntactically correct
+        with open(file_path, "r", encoding="utf-8") as file:
+            source_code = file.read()
+
+        ast.parse(source_code)
+        print("✔ Syntax check passed")
+
+        # 2. Check if all functions have docstrings
+        tree = ast.parse(source_code)
+        missing_docstrings = []
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                if ast.get_docstring(node) is None:
+                    missing_docstrings.append(node.name)
+
+        if missing_docstrings:
+            print("⚠ Missing docstrings in functions:")
+            for func in missing_docstrings:
+                print(f" - {func}")
+        else:
+            print("✔ All functions have docstrings")
+
+        # 3. Final output confirmation
+        print("\n✔ Quality check completed successfully")
+        print(f"✔ Documented file ready: {os.path.basename(file_path)}")
+
+    except SyntaxError as e:
+        print("✖ Syntax error detected:")
+        print(e)
+
+    except Exception as e:
+        print("✖ Error during quality check:")
+        print(e)
+
+
+# Example usage
+if __name__ == "__main__":
+    quality_check("output_with_docstrings.py")
