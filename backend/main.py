@@ -13,7 +13,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-  # File Upload
+  # API FOR FILE Upload
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     
