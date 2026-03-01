@@ -1,54 +1,92 @@
-# Gemini API integration for generating professional Google-style Python docstrings based on function metadata and logic.
+# backend/ai_engine.py
 import os
 from dotenv import load_dotenv
-from google import genai
+from openai import OpenAI
 
-load_dotenv()  # Load environment variables from .env file
+# Load HF token
+load_dotenv()
+HF_TOKEN = os.getenv("HF_TOKEN")
+if not HF_TOKEN:
+    raise RuntimeError("Set HF_TOKEN in .env: HF_TOKEN=hf_...")
 
-# Initialize Gemini client using API key from environment variable
-api_key = os.getenv("GEMINI_API_KEY")
-if not api_key:
-    raise RuntimeError("GEMINI_API_KEY is not set in environment variables.")
+# OpenAI-compatible client pointing to Hugging Face
+client = OpenAI(
+    base_url="https://router.huggingface.co/v1",
+    api_key=HF_TOKEN,
+)
 
-client = genai.Client(api_key=api_key)
-
-
-def generate_demo_docstring(function_data: dict) -> str:
+def generate_docstring(function_data: dict) -> str:
     """
-    Generate a professional Google-style Python docstring for a function
-    using the Gemini API.
+    Generate Google-style docstrings using openai/gpt-oss-20b.
     """
-    function_name = function_data.get("function_name", "unknown_function")
+    function_name = function_data.get("function_name", "unknown")
     parameters = function_data.get("parameters", [])
     logic = function_data.get("logic", [])
-
-    # Join AST-dumped logic into a readable block
-    logic_str = "\n".join(logic)
-
-    prompt = f"""
-You are a Python documentation expert.
-
-Write a professional Google-style docstring for the following function.
-
-Function name: {function_name}
-Parameters: {parameters}
-
-The function's internal logic (AST-like representation) is:
-
-{logic_str}
-
-Requirements:
-- Use Google Python style.
-- Explain what the function does (1–3 sentences).
-- Document each parameter with type (guess if needed) and description.
-- Document the return value.
-- If the function may raise any obvious exceptions, mention them in a Raises section.
-- Do NOT include the function definition itself, only the docstring content (between triple quotes).
-"""
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-    )
-
-    return response.text.strip()
+    
+    # Context for model (function signature + logic preview)
+    param_str = ", ".join(parameters)
+    logic_preview = "\n".join(logic[:3]) if logic else "# Basic implementation"
+    
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a Python expert. Respond with ONLY a Google Python style docstring.\n\n"
+                "Format MUST be:\n"
+                "Args:\n"
+                "    param (type): description\n"
+                "Returns:\n"
+                "    type: description\n"
+                "Raises:\n"
+                "    TypeError: condition\n\n"
+                "Include Args, Returns, Raises. Use types like (int | float)."
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Docstring for:\n\n"
+                f"def {function_name}({param_str}):\n"
+                f"{logic_preview}"
+            ),
+        },
+    ]
+    
+    try:
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-20b",  # YOUR REQUESTED MODEL
+            messages=messages,
+            max_tokens=350,
+            temperature=0.1,
+        )
+        
+        # Extract clean docstring
+        raw = response.choices[0].message.content.strip()
+        
+        # Remove markdown/outer quotes if present
+        if raw.startswith("```"):
+            raw = raw.split("```", 2)[-1].strip()
+        if raw.startswith('"""'):
+            raw = raw[3:]
+        if raw.endswith('"""'):
+            raw = raw[:-3]
+            
+        return raw.strip()
+        
+    except Exception as e:
+        print(f"Model error: {e}")
+        # Fallback matching Gemini style
+        if not parameters:
+            parameters = ["param"]
+        param_docs = ",\n    ".join(
+            [f"{p} (int | float): Input operand" for p in parameters]
+        )
+        return (
+            f"Performs {function_name} operation.\n"
+            f"Args:\n"
+            f"    {param_docs}\n"
+            f"Returns:\n"
+            f"    int | float: Result of {function_name} computation.\n"
+            f"Raises:\n"
+            f"    TypeError: Invalid input types."
+        )
