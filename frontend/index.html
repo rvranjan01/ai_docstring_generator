@@ -1,20 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Python Docstring Generator</title>
-    <!-- <link rel="stylesheet" href="style.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Docstring Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <h1>Automated Python Docstring Generator</h1>
-
-        <input type="file" id="fileInput">
-        <button onclick="uploadFile()">Upload & Parse</button>
-
-        <div id="result"></div>
+        <h1>🧠 AI Python Docstring Generator</h1>
+        <p>Upload your .py file → Get auto-generated Google-style docstrings → Download documented code</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <p>Drag & drop your <strong>.py</strong> file here<br>or click to browse</p>
+            <input type="file" id="fileInput" accept=".py" hidden>
+        </div>
+        
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Generating docstrings with AI...</p>
+        </div>
+        
+        <div id="results" class="results hidden">
+            <div class="summary">
+                <h3>✅ Processing Complete!</h3>
+                <div class="stats">
+                    <span><strong id="filename"></strong></span>
+                    <span id="functionsCount"></span>
+                    <span id="linesAdded"></span>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="downloadBtn" class="download-btn">📥 Download Documented File</button>
+                <button id="previewBtn" class="preview-btn">👁️ Preview Docstrings</button>
+            </div>
+            
+            <div id="preview" class="preview-section hidden">
+                <h4>Generated Docstrings:</h4>
+                <div id="docstringsList"></div>
+            </div>
+        </div>
+        
+        <div id="error" class="error hidden"></div>
     </div>
-
-<script src="script.js"></script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
