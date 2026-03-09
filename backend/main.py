@@ -13,7 +13,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     # STEP 1–3: validate + read file

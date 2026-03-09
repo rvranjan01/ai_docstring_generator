@@ -2,43 +2,55 @@
 
 ![Python version](https://img.shields.io/badge/python-3.10%2B-blue) ![License](https://img.shields.io/badge/license-MIT-green)
 
-## What the project does
+A lightweight full‑stack tool that automatically generates Google‑style Python docstrings for functions within a `.py` file using AI.
 
-**AI Docstring Generator** is a simple full‑stack application that automatically produces Google‑style Python docstrings for functions found in an uploaded `.py` file. The backend parses the code using Python's AST module, sends metadata to an AI engine (Gemini/OpenAI), and returns recommended docstrings which are then displayed in the frontend UI.
+---
 
-## Why the project is useful
+## 🚀 What the project does
 
-- Accelerates documentation by generating initial docstrings.
-- Promotes consistent formatting and style across codebases.
-- Helps developers understand unfamiliar functions quickly.
-- Demonstrates integration of FastAPI, AST parsing, and language model APIs.
+Upload a Python file via the web UI, and the backend will:
 
-## Project structure
+1. Parse the code with Python's AST to discover functions.
+2. Send each function's signature and logic preview to an AI engine (OpenAI/Gemini via Hugging Face).
+3. Insert the returned docstrings into the original source and offer the documented file for download.
+
+The frontend provides a simple drag‑and‑drop interface with a preview of generated documentation.
+
+## 💡 Why it’s useful
+
+- **Speeds up documentation** by providing a starting point for your docstrings.
+- **Enforces consistent style** (Google Python pattern) across projects.
+- **Improves code comprehension** for collaborators and maintainers.
+- **Demonstrates integration** of FastAPI, AST parsing, and large‑language‑model APIs.
+
+## 🗂️ Project structure
 
 ```
 ai_docstring_generator/
 ├── backend/            # FastAPI server and AI logic
-│   ├── ai_engine.py    # Gemini/OpenAI integration & prompt logic
-│   ├── main.py         # FastAPI application with upload endpoint
-│   ├── parser.py       # AST-based Python parser
+│   ├── ai_engine.py    # AI prompt and client setup
+│   ├── main.py         # FastAPI app + upload endpoint
+│   ├── parser.py       # AST-based code analyzer
 │   └── requirements.txt
-├── frontend/           # Simple HTML/JS UI for file upload
+├── frontend/           # Minimal HTML/JS UI
 │   ├── index.html
 │   ├── script.js
 │   └── style.css
-├── func.py             # sample arithmetic script (demo purposes)
-├── hi.py               # empty placeholder
-├── test.txt            # miscellaneous/test data
-└── README.md           # this documentation
+├── func.py             # example code snippet
+├── hi.py               # placeholder file
+├── test.txt            # misc test data
+└── README.md           # you are reading this
 ```
 
-## Prerequisites
+## ⚙️ Prerequisites
 
-- Python 3.10 or later
+- Python 3.10 or newer
 - `pip` package manager
-- Gemini or OpenAI API key (stored in `.env` or environment variable)
+- An API key from one of:
+  - Hugging Face inference (for `openai` compatible endpoint)
+  - OpenAI
 
-## Installation
+## 🛠️ Installation
 
 1. **Clone the repo**
    ```bash
@@ -46,11 +58,11 @@ ai_docstring_generator/
    cd ai_docstring_generator
    ```
 
-2. **Create and activate a virtual environment**
+2. **Set up a virtual environment**
    ```bash
-   python -m venv .venv            # or `venv` on Windows
-   source .venv/bin/activate       # Linux/macOS
-   .venv\Scripts\activate        # Windows PowerShell
+   python -m venv .venv
+   source .venv/bin/activate   # macOS/Linux
+   .venv\Scripts\activate    # Windows PowerShell
    ```
 
 3. **Install dependencies**
@@ -58,62 +70,63 @@ ai_docstring_generator/
    pip install -r backend/requirements.txt
    ```
 
-4. **Configure API credentials**
-   Create a `.env` file in the project root with:
+4. **Configure credentials**
+   Create a `.env` file at the project root containing either:
    ```env
-   GEMINI_API_KEY=your_api_key_here
+   HF_TOKEN=hf_<your_token>        # Hugging Face API key
+   # or
+   OPENAI_API_KEY=sk-...           # OpenAI key
    ```
-   or set `OPENAI_API_KEY` if using the OpenAI client.
+   The backend chooses whichever is available.
 
-## Running the application
+## ▶️ Running the app
 
-1. **Start the backend**
+1. **Start backend**
    ```bash
    cd backend
    uvicorn main:app --reload --host 127.0.0.1 --port 8000
    ```
 
-2. **Open the frontend**
-   - Open `frontend/index.html` in your browser (e.g. via live server extension or by double-clicking).
-   - Click **Upload & Parse** after selecting a `.py` file.
+2. **Use the frontend**
+   - Open `frontend/index.html` in a browser (no server required).
+   - Upload a `.py` file and watch as docstrings are generated.
 
-3. **Review results**
-   The page will list each function and the generated docstring.
+3. **Download results**
+   Reviewed docstrings can be previewed or downloaded as a new file.
 
-## Example
+## 🧪 Example
 
-**Input Python file**:
+**Source file**
 ```python
 
 def add(a, b):
     return a + b
 ```
 
-**Backend response snippet**:
+**Backend output**
 ```json
 {
   "function_name": "add",
   "parameters": ["a", "b"],
-  "docstring": "\"\"\"\nAdd two numbers.\n\nArgs:\n    a (int): First addend.\n    b (int): Second addend.\n\nReturns:\n    int: Sum of `a` and `b`.\n\"\"\""
+  "docstring": "\"\"\"Add two numbers.\n\nArgs:\n    a (int): First addend.\n    b (int): Second addend.\n\nReturns:\n    int: Sum of `a` and `b`.\n\"\"\""
 }
 ```
 
-## Getting help
+## ❓ Getting help
 
-- File issues or feature requests on the GitHub repository.
-- Check the FastAPI docs for backend development: https://fastapi.tiangolo.com/
+- Open issues or feature requests on this repository.
+- Refer to [FastAPI docs](https://fastapi.tiangolo.com/) for backend customization.
+- Hugging Face inference documentation: https://huggingface.co/docs/api-inference
 
-## Contributing
+<!-- ## 🤝 Contribution & Maintenance
 
-Contributions are welcome! Please read a [`CONTRIBUTING.md`](CONTRIBUTING.md) file (when added) or open an issue to discuss improvements. Keep pull requests small and include tests where appropriate.
+Contributions are welcome! For details, refer to a future [`CONTRIBUTING.md`](CONTRIBUTING.md) or open an issue. -->
 
-<!-- ## Maintainers
+<!-- **Maintainer:** *(add your name or team here)* -->
 
-- Primary maintainer: *Your Name* – [you@example.com](mailto:you@example.com) -->
+<!-- ## 📄 License
 
-## License
+This project is released under the [MIT License](LICENSE).
 
-Distributed under the [MIT License](LICENSE).
-
----
+--- -->
 
