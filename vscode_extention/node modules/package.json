@@ -1,1 +1,43 @@
-
+{
+  "name": "ai-docstring-generator",
+  "displayName": "AI Docstring Generator",
+  "description": "Generate Google-style docstrings for the current Python file via the project's FastAPI backend.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onCommand:docstringGenerator.generate"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "docstringGenerator.generate",
+        "title": "AI: Generate Docstrings for Current File"
+      }
+    ],
+    "configuration": {
+      "title": "AI Docstring Generator",
+      "properties": {
+        "docstringGenerator.backendUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8000/upload",
+          "description": "FastAPI backend upload endpoint URL"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "postinstall": "echo Extension dependencies installed"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}
