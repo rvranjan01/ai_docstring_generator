@@ -15,10 +15,18 @@ client = OpenAI(
     api_key=HF_TOKEN,
 )
 
-def generate_docstring(function_data: dict) -> str:
-    """
-    Generate Google-style docstrings using openai/gpt-oss-20b.
-    """
+# def generate_docstring(function_data: dict) -> str:
+def generate_docstring(function_data: dict, style: str, language: str):
+    # """
+    # Generate Google-style docstrings using openai/gpt-oss-20b.
+    # """
+    style_prompt = {
+    "google": "Google Python style docstring",
+    "numpy": "NumPy style docstring",
+    "jsdoc": "JSDoc comment style",
+    "java": "JavaDoc style"
+    }.get(style, "Google style")
+    
     function_name = function_data.get("function_name", "unknown")
     parameters = function_data.get("parameters", [])
     logic = function_data.get("logic", [])
@@ -28,29 +36,24 @@ def generate_docstring(function_data: dict) -> str:
     logic_preview = "\n".join(logic[:3]) if logic else "# Basic implementation"
     
     messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are a Python expert. Respond with ONLY a Google Python style docstring.\n\n"
-                "Format MUST be:\n"
-                "Args:\n"
-                "    param (type): description\n"
-                "Returns:\n"
-                "    type: description\n"
-                "Raises:\n"
-                "    TypeError: condition\n\n"
-                "Include Args, Returns, Raises. Use types like (int | float)."
-            ),
-        },
-        {
-            "role": "user",
-            "content": (
-                f"Docstring for:\n\n"
-                f"def {function_name}({param_str}):\n"
-                f"{logic_preview}"
-            ),
-        },
-    ]
+    {
+        "role": "system",
+        "content": f"""
+        You are an expert in {language}.
+
+        Generate ONLY a {style_prompt} docstring.
+
+        No explanation. Only docstring.
+        """
+    },
+    {
+        "role": "user",
+        "content": f"""
+        Function:
+        {function_data["code"]}
+        """
+    }
+]
     
     try:
         response = client.chat.completions.create(

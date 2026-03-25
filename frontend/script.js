@@ -7,6 +7,7 @@ const errorDiv = document.getElementById('error');
 const downloadBtn = document.getElementById('downloadBtn');
 const previewBtn = document.getElementById('previewBtn');
 const preview = document.getElementById('preview');
+const docStyle = document.getElementById('docStyle');
 let currentResult = null;
 
 uploadArea.addEventListener('click', () => fileInput.click());
@@ -43,8 +44,16 @@ function handleFile(e) {
 }
 
 async function handleFileSelect(file) {
-    if (!file.name.endsWith('.py')) {
-        showError('Please upload a .py file only!');
+    // if (!file.name.endsWith('.py')) {
+    //     showError('Please upload a .py file only!');
+    //     return;
+    // }
+    const allowedExtensions = ['.py', '.js', '.java', '.ts'];
+
+    const isValid = allowedExtensions.some(ext => file.name.endsWith(ext));
+
+    if (!isValid) {
+        showError('Please upload a supported file (.py, .js, .java, .ts)');
         return;
     }
     
@@ -53,6 +62,7 @@ async function handleFileSelect(file) {
     
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('style', docStyle.value);
     
     try {
         const response = await fetch(API_URL, {

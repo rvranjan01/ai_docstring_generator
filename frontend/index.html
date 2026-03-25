@@ -9,12 +9,19 @@
 <body>
     <div class="container">
         <h1>🧠 AI Python Docstring Generator</h1>
-        <p>Upload your .py file → Get auto-generated Google-style docstrings → Download documented code</p>
+        <p>Upload your file → Get auto-generated docstrings → Download documented code</p>
         
+        <select id="docStyle">
+            <option value="google">Google (Python)</option>
+            <option value="numpy">NumPy</option>
+            <option value="jsdoc">JSDoc</option>
+            <option value="java">JavaDoc</option>
+        </select>
+
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📁</div>
-            <p>Drag & drop your <strong>.py</strong> file here<br>or click to browse</p>
-            <input type="file" id="fileInput" accept=".py" hidden>
+            <p>Drag & drop your file here<br>or click to browse</p>
+            <input type="file" id="fileInput" accept=".py,.js,.java,.ts" hidden>
         </div>
         
         <div id="loading" class="loading hidden">
