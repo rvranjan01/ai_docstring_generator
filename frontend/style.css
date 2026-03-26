@@ -36,6 +36,62 @@ p {
     font-size: 1.1em;
 }
 
+#docStyle {
+  appearance: none;              /* Remove default styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding: 10px 40px 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  cursor: pointer;
+  outline: none;
+
+  /* Subtle shadow */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  /* Smooth transitions */
+  transition: all 0.2s ease;
+
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='12' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7L10 12L15 7' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+/* Hover */
+#docStyle:hover {
+  border-color: #6366f1;
+}
+
+/* Focus */
+#docStyle:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Active click */
+#docStyle:active {
+  transform: scale(0.98);
+}
+
+.doc-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
 .upload-area {
     border: 3px dashed #667eea;
     border-radius: 15px;
