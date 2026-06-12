@@ -6,6 +6,14 @@ A lightweight full‑stack tool that automatically generates Google‑style Pyth
 
 ---
 
+## 📸 Screenshots
+
+### Upload interface
+<img src="./assets/1.png" alt="Web UI for uploading a Python file" width="800">
+
+### Generated docstring preview
+<img src="./assets/2.png" alt="Preview of generated Google-style docstrings" width="800">
+
 ## 🚀 What the project does
 
 Upload a Python file via the web UI, and the backend will:
